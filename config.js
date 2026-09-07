@@ -54,8 +54,8 @@ const CONFIG = {
   seo: {
     title: "Jonathan Shkolnik — johny.ops",
     description: "Fractional COO. Operations, systems, and the boring work that makes companies run.",
-    url: "https://CHANGE-ME.netlify.app",            // your final site address
-    image: "https://CHANGE-ME.netlify.app/avatar.jpg", // preview image when shared
+    url: "https://johnyopslinks.netlify.app",            // your final site address
+    image: "https://johnyopslinks.netlify.app/avatar.jpg", // preview image when shared
   },
 };
 
