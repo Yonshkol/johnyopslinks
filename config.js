@@ -33,8 +33,9 @@ const CONFIG = {
 
     { label: "TikTok", url: "https://www.tiktok.com/@johny_ops", icon: "tiktok" },
 
-    { label: "PLP", url: "https://CHANGE-ME.com", icon: "briefcase",
-      description: "A business I built, start to finish" },
+    // Put the real PLP address in the line below, then delete the two // marks.
+    // { label: "PLP", url: "https://PUT-THE-REAL-URL-HERE.com", icon: "briefcase",
+    //   description: "A business I built, start to finish" },
   ],
 
   // --- Email capture -----------------------------------------------
