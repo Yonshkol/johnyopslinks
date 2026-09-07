@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--meta:start-->
+<title>Jonathan Shkolnik — johny.ops</title>
+<meta name="description" content="Fractional COO. Operations, systems, and the boring work that makes companies run.">
+<link rel="canonical" href="https://CHANGE-ME.netlify.app">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Jonathan Shkolnik — johny.ops">
+<meta property="og:description" content="Fractional COO. Operations, systems, and the boring work that makes companies run.">
+<meta property="og:url" content="https://CHANGE-ME.netlify.app">
+<meta property="og:image" content="https://CHANGE-ME.netlify.app/avatar.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1d4ed8">
+<!--meta:end-->
+<link rel="icon" href="data:,">
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #f6f7fb; --fg: #0a0a10; --muted: #61626d;
+  --card: #ffffff; --card-2: #fbfbfe;
+  --border: #e5e7f0;
+  --shadow: 0 1px 2px rgba(10,10,20,.04), 0 10px 30px -22px rgba(10,10,20,.5);
+  --accent: #1d4ed8; --on-accent: #ffffff;
+  --spark: #06b6d4;
+  --glow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --brand: var(--accent);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #05060a; --fg: #f5f6fa; --muted: #8a8d9c;
+    --card: #101219; --card-2: #0b0d13;
+    --border: #1e212b;
+    --shadow: 0 10px 34px -22px #000;
+    --accent: #60a5fa; --on-accent: #06142e;
+    --spark: #22d3ee;
+    --glow: color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; padding: 3.25rem 1.125rem 3rem;
+  background: var(--bg); color: var(--fg);
+  font: 400 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+/* two slow-drifting lights, colored by your accent */
+body::before, body::after {
+  content: ""; position: fixed; z-index: -1; border-radius: 50%;
+  filter: blur(70px); pointer-events: none;
+}
+body::before {
+  width: 78vmax; height: 78vmax; top: -42vmax; left: -22vmax;
+  background: var(--glow); opacity: .9;
+  animation: drift-a 24s ease-in-out infinite alternate;
+}
+body::after {
+  width: 52vmax; height: 52vmax; top: -14vmax; right: -24vmax;
+  background: color-mix(in srgb, var(--spark) 28%, transparent); opacity: .55;
+  animation: drift-b 31s ease-in-out infinite alternate;
+}
+@keyframes drift-a { to { transform: translate3d(16vmax, 8vmax, 0) scale(1.15); } }
+@keyframes drift-b { to { transform: translate3d(-14vmax, 12vmax, 0) scale(1.2); } }
+main { max-width: 30rem; margin: 0 auto; }
+
+/* ---- header ---- */
+header { text-align: center; margin-bottom: 2rem; }
+#avatarWrap { position: relative; width: 124px; margin: 0 auto 1.25rem; }
+#avatarWrap::before {
+  content: ""; position: absolute; inset: -18px; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow), transparent 72%);
+}
+#avatar {
+  position: relative; display: block; width: 124px; height: 124px;
+  border-radius: 50%; object-fit: cover;
+  box-shadow: 0 0 0 2px var(--bg),
+              0 0 0 4px color-mix(in srgb, var(--accent) 60%, transparent),
+              0 20px 50px -20px var(--accent);
+}
+h1 {
+  font-size: clamp(1.9rem, 8.5vw, 2.375rem); font-weight: 800;
+  letter-spacing: -.04em; line-height: 1.05; margin: 0;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  h1 {
+    background: linear-gradient(175deg, var(--fg), color-mix(in srgb, var(--fg) 55%, var(--accent)));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+}
+#handle {
+  display: inline-flex; align-items: center; gap: .4rem;
+  margin: .75rem 0 0; padding: .3rem .625rem .3rem .5rem; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  font: 600 .75rem/1 ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  color: var(--accent);
+}
+#handle::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; box-shadow: 0 0 8px currentColor;
+}
+#tagline {
+  margin: .875rem auto 0; max-width: 23rem;
+  color: var(--muted); font-size: .9375rem; line-height: 1.5; text-wrap: balance;
+}
+
+/* ---- links ---- */
+ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .625rem; }
+a.link {
+  display: flex; align-items: center; gap: .875rem;
+  padding: .875rem 1rem; min-height: 4rem;
+  background: linear-gradient(180deg, var(--card), var(--card-2));
+  border: 1px solid var(--border); border-radius: 1.125rem;
+  box-shadow: var(--shadow); color: inherit; text-decoration: none;
+  transition: transform .16s, border-color .16s, box-shadow .16s;
+}
+a.link:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 18%, transparent),
+              0 16px 34px -22px var(--brand);
+}
+a.link:active { transform: translateY(0) scale(.99); }
+.chip {
+  flex: none; width: 2.5rem; height: 2.5rem; border-radius: .8125rem;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  color: var(--brand);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand) 24%, transparent);
+  transition: transform .16s;
+}
+a.link:hover .chip { transform: scale(1.06); }
+.chip svg { width: 1.25rem; height: 1.25rem; display: block; }
+.chip img { width: 1.375rem; height: 1.375rem; object-fit: contain; border-radius: .25rem; }
+.chip .emoji { font-size: 1.25rem; line-height: 1; }
+.text { min-width: 0; flex: 1; }
+.label { display: block; font-weight: 650; font-size: 1rem; letter-spacing: -.015em; }
+.desc {
+  display: block; margin-top: .0625rem; color: var(--muted); font-size: .8125rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.go {
+  flex: none; width: 1.0625rem; height: 1.0625rem; color: var(--muted);
+  opacity: .5; transition: opacity .16s, transform .16s, color .16s;
+}
+a.link:hover .go { opacity: 1; color: var(--brand); transform: translate(2px, -2px); }
+
+/* the one loud button */
+a.link.featured {
+  background: linear-gradient(115deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--spark)));
+  border-color: transparent; color: var(--on-accent);
+  box-shadow: 0 16px 44px -16px var(--accent);
+}
+a.link.featured:hover { box-shadow: 0 22px 55px -16px var(--accent); border-color: transparent; }
+.featured .chip {
+  background: color-mix(in srgb, var(--on-accent) 22%, transparent);
+  color: var(--on-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--on-accent) 25%, transparent);
+}
+.featured .label { font-weight: 700; }
+.featured .desc { color: var(--on-accent); opacity: .82; }
+.featured .go { color: var(--on-accent); opacity: .85; }
+
+/* ---- email ---- */
+form {
+  margin-top: 2rem; padding: 1.25rem;
+  border: 1px solid var(--border); border-radius: 1.125rem;
+  background: linear-gradient(180deg, var(--card), var(--card-2)); box-shadow: var(--shadow);
+}
+h2 { font-size: 1rem; font-weight: 650; letter-spacing: -.015em; margin: 0; }
+#emailSub { margin: .25rem 0 .875rem; color: var(--muted); font-size: .8125rem; }
+.row { display: flex; gap: .5rem; flex-wrap: wrap; }
+input {
+  flex: 1 1 11rem; min-width: 0; padding: .8125rem .875rem; font: inherit; font-size: .9375rem;
+  color: inherit; background: var(--bg); border: 1px solid var(--border); border-radius: .8125rem;
+}
+input::placeholder { color: var(--muted); }
+button {
+  padding: .8125rem 1.25rem; font: inherit; font-size: .9375rem; font-weight: 650;
+  background: linear-gradient(115deg, var(--accent), color-mix(in srgb, var(--accent) 55%, var(--spark)));
+  color: var(--on-accent); border: 0; border-radius: .8125rem; cursor: pointer;
+  box-shadow: 0 10px 26px -14px var(--accent);
+}
+button[disabled] { opacity: .6; cursor: progress; }
+#formMsg { margin: .625rem 0 0; font-size: .8125rem; color: var(--muted); min-height: 1.2em; }
+
+footer { text-align: center; margin-top: 2.5rem; font-size: .75rem; color: var(--muted); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: .5rem; }
+@media (prefers-reduced-motion: reduce) {
+  *, body::before, body::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div id="avatarWrap" hidden><img id="avatar" alt=""></div>
+    <h1 id="name"></h1>
+    <p id="handle" hidden></p>
+    <p id="tagline"></p>
+  </header>
+
+  <nav aria-label="Links"><ul id="links"></ul></nav>
+
+  <form id="signup" hidden>
+    <h2 id="emailHeading"></h2>
+    <p id="emailSub"></p>
+    <div class="row">
+      <label for="email" style="position:absolute;left:-9999px">Email address</label>
+      <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@example.com">
+      <button type="submit" id="submit"></button>
+    </div>
+    <p id="formMsg" role="status" aria-live="polite"></p>
+  </form>
+
+  <footer id="footer"></footer>
+</main>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  var c = CONFIG, NS = "http://www.w3.org/2000/svg";
+
+  // real brand marks, so the page does not look like an emoji picker
+  var ICONS = {
+    youtube:   { c: "#FF0033", d: "M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z" },
+    linkedin:  { c: "#0A66C2", d: "M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.04c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" },
+    instagram: { c: "#E1306C", d: "M12 2.16c3.2 0 3.58.01 4.85.07 3.25.15 4.77 1.69 4.92 4.92.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.15 3.23-1.66 4.77-4.92 4.92-1.27.06-1.64.07-4.85.07s-3.58-.01-4.85-.07c-3.26-.15-4.77-1.7-4.92-4.92-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.15-3.23 1.66-4.77 4.92-4.92 1.27-.06 1.65-.07 4.85-.07zm0-2.16C8.74 0 8.33.01 7.05.07c-4.36.2-6.78 2.62-6.98 6.98C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.2 4.36 2.62 6.78 6.98 6.98 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c4.35-.2 6.78-2.62 6.98-6.98.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.2-4.35-2.62-6.78-6.98-6.98C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-11.85a1.44 1.44 0 1 0 0 2.89 1.44 1.44 0 0 0 0-2.89z" },
+    tiktok:    { c: "#FE2C55", d: "M12.53.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" },
+    substack:  { c: "#FF6719", d: "M22.54 8.24H1.46V5.41h21.08v2.83zM1.46 10.81V24L12 18.11 22.54 24V10.81H1.46zM22.54 0H1.46v2.84h21.08V0z" },
+    calendar:  { s: 1, d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" },
+    briefcase: { s: 1, d: "M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8zM3 12h18" },
+    mail:      { s: 1, d: "M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 7l-10 6L2 7" },
+    link:      { s: 1, d: "M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" }
+  };
+
+  function svg(d, stroke) {
+    var s = document.createElementNS(NS, "svg");
+    s.setAttribute("viewBox", "0 0 24 24");
+    s.setAttribute("aria-hidden", "true");
+    var p = document.createElementNS(NS, "path");
+    p.setAttribute("d", d);
+    if (stroke) {
+      s.setAttribute("fill", "none");
+      s.setAttribute("stroke", "currentColor");
+      s.setAttribute("stroke-width", "2");
+      s.setAttribute("stroke-linecap", "round");
+      s.setAttribute("stroke-linejoin", "round");
+    } else {
+      s.setAttribute("fill", "currentColor");
+    }
+    s.appendChild(p);
+    return s;
+  }
+
+  // ---- click + pageview tracking (no backend; GoatCounter's public pixel) ----
+  function track(path) {
+    if (!c.goatcounter) return;
+    fetch("https://" + c.goatcounter + ".goatcounter.com/count?p=" +
+          encodeURIComponent(path) + "&e=true&r=" + encodeURIComponent(document.referrer),
+          { mode: "no-cors", keepalive: true }).catch(function () {});
+  }
+  track("/");
+
+  // ---- header ----
+  document.title = (c.seo && c.seo.title) || c.name;
+  document.getElementById("name").textContent = c.name;
+  document.getElementById("tagline").textContent = c.tagline || "";
+  if (c.handle) {
+    var hEl = document.getElementById("handle");
+    hEl.textContent = c.handle;
+    hEl.hidden = false;
+  }
+  if (c.avatar) {
+    var img = document.getElementById("avatar"), wrap = document.getElementById("avatarWrap");
+    img.onerror = function () { wrap.hidden = true; };
+    img.src = c.avatar;
+    img.alt = c.name;
+    wrap.hidden = false;
+  }
+  if (c.theme) {
+    var accent = matchMedia("(prefers-color-scheme: dark)").matches
+      ? (c.theme.accentDark || c.theme.accent) : c.theme.accent;
+    if (accent) document.documentElement.style.setProperty("--accent", accent);
+  }
+  document.getElementById("footer").textContent = "© " + new Date().getFullYear() + " " + c.name;
+
+  // ---- links ----
+  var list = document.getElementById("links");
+  c.links.forEach(function (l) {
+    var a = document.createElement("a");
+    a.className = "link" + (l.featured ? " featured" : "");
+    a.href = l.url;
+    a.rel = "noopener me";
+
+    var chip = document.createElement("span");
+    chip.className = "chip";
+    var ico = ICONS[l.icon];
+    if (ico) {
+      a.style.setProperty("--brand", ico.c || "var(--accent)");
+      chip.appendChild(svg(ico.d, ico.s));
+    } else if (l.icon && /^(https?:|\/|\.)|\.(png|jpe?g|svg|webp|gif)$/i.test(l.icon)) {
+      a.style.setProperty("--brand", "var(--accent)");
+      var im = document.createElement("img");
+      im.src = l.icon; im.alt = "";
+      chip.appendChild(im);
+    } else if (l.icon) {
+      a.style.setProperty("--brand", "var(--accent)");
+      var em = document.createElement("span");
+      em.className = "emoji";
+      em.textContent = l.icon;
+      em.setAttribute("aria-hidden", "true");
+      chip.appendChild(em);
+    } else {
+      a.style.setProperty("--brand", "var(--accent)");
+      chip.appendChild(svg(ICONS.link.d, 1));
+    }
+    a.appendChild(chip);
+
+    var txt = document.createElement("span");
+    txt.className = "text";
+    var lab = document.createElement("span");
+    lab.className = "label";
+    lab.textContent = l.label;
+    txt.appendChild(lab);
+    if (l.description) {
+      var d = document.createElement("span");
+      d.className = "desc";
+      d.textContent = l.description;
+      txt.appendChild(d);
+    }
+    a.appendChild(txt);
+
+    var go = svg("M7 17L17 7M7 7h10v10", 1);
+    go.setAttribute("class", "go");
+    a.appendChild(go);
+
+    a.addEventListener("click", function () { track("/click/" + l.label); });
+
+    var li = document.createElement("li");
+    li.appendChild(a);
+    list.appendChild(li);
+  });
+
+  // ---- email capture ----
+  if (c.emailEndpoint) {
+    var form = document.getElementById("signup"),
+        msg = document.getElementById("formMsg"),
+        btn = document.getElementById("submit");
+    document.getElementById("emailHeading").textContent = c.emailHeading || "Subscribe";
+    document.getElementById("emailSub").textContent = c.emailSub || "";
+    btn.textContent = c.emailButton || "Subscribe";
+    form.hidden = false;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      btn.disabled = true;
+      msg.textContent = "Sending…";
+      fetch(c.emailEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email: document.getElementById("email").value })
+      }).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        form.reset();
+        msg.textContent = "Thanks — check your inbox.";
+        track("/signup");
+      }).catch(function () {
+        msg.textContent = "Something went wrong. Try again?";
+      }).finally(function () { btn.disabled = false; });
+    });
+  }
+})();
+</script>
+</body>
+</html>
