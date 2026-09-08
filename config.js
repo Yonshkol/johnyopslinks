@@ -25,7 +25,7 @@ const CONFIG = {
   //       briefcase | mail | link   (or an emoji, or an image URL)
   // featured: true  -> big glowing button. Use it on one link.
   links: [
-    { label: "Work with me", url: "/services", icon: "briefcase",
+    { label: "Work with me", url: "services.html", icon: "briefcase",
       description: "Builds, retainers, prices", featured: true },
 
     { label: "Book an advisory call", url: "https://cal.com/jonathan-shkolnik/advisorycall",
