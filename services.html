@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--meta:start-->
+<title>Work with me — Jonathan Shkolnik</title>
+<meta name="description" content="Fractional COO. Hand-built automations, operations retainers, and the boring work that keeps a company running. From $60.">
+<link rel="canonical" href="https://johnyopslinks.netlify.app/services">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Work with me — Jonathan Shkolnik">
+<meta property="og:description" content="Fractional COO. Hand-built automations, operations retainers, and the boring work that keeps a company running. From $60.">
+<meta property="og:url" content="https://johnyopslinks.netlify.app/services">
+<meta property="og:image" content="https://johnyopslinks.netlify.app/avatar.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1d4ed8">
+<!--meta:end-->
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<style>
+section { margin-top: 2.75rem; }
+.eyebrow {
+  font: 650 .6875rem/1 ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 .875rem;
+}
+.pillars { display: grid; gap: .625rem; }
+@media (min-width: 40rem) { .pillars { grid-template-columns: repeat(3, 1fr); } }
+.pillar { padding: 1.125rem; }
+.pillar h3 { margin: 0 0 .375rem; font-size: .9375rem; font-weight: 650; letter-spacing: -.015em; }
+.pillar p { margin: 0; color: var(--muted); font-size: .8438rem; line-height: 1.5; }
+
+.tiers { display: grid; gap: .875rem; }
+@media (min-width: 46rem) { .tiers { grid-template-columns: repeat(2, 1fr); } }
+.tier { padding: 1.375rem; display: flex; flex-direction: column; }
+.tier.is-featured {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
+              0 20px 50px -30px var(--accent);
+}
+.tier-top { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; }
+.tier h3 { margin: 0; font-size: 1rem; font-weight: 700; letter-spacing: -.02em; }
+.tier .tag {
+  font: 650 .625rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  padding: .3rem .5rem; border-radius: 999px; white-space: nowrap;
+}
+.price { display: flex; align-items: baseline; gap: .4rem; margin: .875rem 0 .25rem; }
+.price b { font-size: 1.75rem; font-weight: 800; letter-spacing: -.04em; }
+.price span { color: var(--muted); font-size: .8125rem; }
+.tier .blurb { margin: .5rem 0 1rem; color: var(--muted); font-size: .875rem; line-height: 1.5; }
+.tier ul { list-style: none; padding: 0; margin: 0 0 1.25rem; display: grid; gap: .5rem; }
+.tier li { display: flex; gap: .5rem; font-size: .8438rem; line-height: 1.45; }
+.tier li svg { flex: none; width: .875rem; height: .875rem; margin-top: .25rem; color: var(--accent); }
+.tier .note {
+  margin: -.75rem 0 1.125rem; font-size: .75rem; color: var(--muted); font-style: italic;
+}
+.tier .btn { margin-top: auto; }
+
+.steps { display: grid; gap: .625rem; counter-reset: step; }
+.step { padding: 1.125rem 1.125rem 1.125rem 3.25rem; position: relative; }
+.step::before {
+  counter-increment: step; content: counter(step);
+  position: absolute; left: 1.125rem; top: 1.125rem;
+  width: 1.5rem; height: 1.5rem; border-radius: .5rem;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font: 700 .75rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.step h3 { margin: 0 0 .25rem; font-size: .9375rem; font-weight: 650; letter-spacing: -.015em; }
+.step p { margin: 0; color: var(--muted); font-size: .8438rem; line-height: 1.5; }
+
+.closing { padding: 1.75rem 1.375rem; text-align: center; }
+.closing h2 { font-size: 1.125rem; font-weight: 700; letter-spacing: -.025em; }
+.closing p { margin: .5rem auto 1.25rem; max-width: 26rem; color: var(--muted); font-size: .875rem; }
+</style>
+</head>
+<body>
+<main class="wide">
+  <header>
+    <div id="avatarWrap" class="sm" hidden><img id="avatar" alt=""></div>
+    <h1 id="headline"></h1>
+    <p class="lede" id="lede"></p>
+    <p style="margin:1.5rem 0 0"><a class="btn" id="heroCta" href="#tiers">See what it costs</a></p>
+  </header>
+
+  <section>
+    <p class="eyebrow">What I actually do</p>
+    <div class="pillars" id="pillars"></div>
+  </section>
+
+  <section id="tiers">
+    <p class="eyebrow">Prices</p>
+    <div class="tiers" id="tierGrid"></div>
+  </section>
+
+  <section>
+    <p class="eyebrow">How it goes</p>
+    <div class="steps" id="steps"></div>
+  </section>
+
+  <section>
+    <div class="surface closing">
+      <h2 id="closeTitle"></h2>
+      <p id="closeBody"></p>
+      <a class="btn" id="closeCta" href="#"></a>
+    </div>
+  </section>
+
+  <footer>
+    <p><a href="/">← All my links</a></p>
+    <p id="copy"></p>
+  </footer>
+</main>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  var c = CONFIG, s = c.services;
+
+  function track(path) {
+    if (!c.goatcounter) return;
+    fetch("https://" + c.goatcounter + ".goatcounter.com/count?p=" +
+          encodeURIComponent(path) + "&e=true&r=" + encodeURIComponent(document.referrer),
+          { mode: "no-cors", keepalive: true }).catch(function () {});
+  }
+  track("/services");
+
+  var tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" ' +
+             'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l6 6L20 6"/></svg>';
+
+  document.title = s.seo.title;
+  document.getElementById("headline").textContent = s.headline;
+  document.getElementById("lede").textContent = s.lede;
+  document.getElementById("copy").textContent = "© " + new Date().getFullYear() + " " + c.name;
+
+  if (c.avatar) {
+    var img = document.getElementById("avatar"), wrap = document.getElementById("avatarWrap");
+    img.onerror = function () { wrap.hidden = true; };
+    img.src = c.avatar; img.alt = c.name; wrap.hidden = false;
+  }
+  if (c.theme) {
+    var accent = matchMedia("(prefers-color-scheme: dark)").matches
+      ? (c.theme.accentDark || c.theme.accent) : c.theme.accent;
+    if (accent) document.documentElement.style.setProperty("--accent", accent);
+  }
+
+  var el = function (tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  var pg = document.getElementById("pillars");
+  s.pillars.forEach(function (p) {
+    var d = el("div", "surface pillar");
+    d.appendChild(el("h3", null, p.title));
+    d.appendChild(el("p", null, p.body));
+    pg.appendChild(d);
+  });
+
+  var grid = document.getElementById("tierGrid");
+  s.tiers.forEach(function (t) {
+    var card = el("div", "surface tier" + (t.featured ? " is-featured" : ""));
+
+    var top = el("div", "tier-top");
+    top.appendChild(el("h3", null, t.name));
+    if (t.featured) top.appendChild(el("span", "tag", "Most impact"));
+    card.appendChild(top);
+
+    var price = el("div", "price");
+    price.appendChild(el("b", null, t.price));
+    if (t.unit) price.appendChild(el("span", null, t.unit));
+    card.appendChild(price);
+
+    card.appendChild(el("p", "blurb", t.blurb));
+
+    var ul = el("ul");
+    (t.features || []).forEach(function (f) {
+      var li = el("li");
+      li.innerHTML = tick;
+      li.appendChild(el("span", null, f));
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+
+    if (t.note) card.appendChild(el("p", "note", t.note));
+
+    if (t.cta) {
+      var a = el("a", "btn" + (t.featured ? "" : " ghost"), t.cta.label);
+      a.href = t.cta.url;
+      a.rel = "noopener";
+      a.addEventListener("click", function () { track("/cta/" + t.name); });
+      card.appendChild(a);
+    }
+    grid.appendChild(card);
+  });
+
+  var steps = document.getElementById("steps");
+  s.process.forEach(function (p) {
+    var d = el("div", "surface step");
+    d.appendChild(el("h3", null, p.title));
+    d.appendChild(el("p", null, p.body));
+    steps.appendChild(d);
+  });
+
+  document.getElementById("closeTitle").textContent = s.closing.title;
+  document.getElementById("closeBody").textContent = s.closing.body;
+  var cc = document.getElementById("closeCta");
+  cc.textContent = s.closing.cta.label;
+  cc.href = s.closing.cta.url;
+  cc.addEventListener("click", function () { track("/cta/closing"); });
+})();
+</script>
+</body>
+</html>

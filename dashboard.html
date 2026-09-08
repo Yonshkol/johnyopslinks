@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Ops dashboard</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<style>
+main.dash { max-width: 60rem; }
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.head h1 { font-size: 1.5rem; }
+.stamp { color: var(--muted); font: 500 .75rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.eyebrow {
+  font: 650 .6875rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 2.25rem 0 .875rem;
+}
+.tiles { display: grid; gap: .75rem; grid-template-columns: repeat(2, 1fr); }
+@media (min-width: 44rem) { .tiles { grid-template-columns: repeat(4, 1fr); } }
+.tile { padding: 1rem 1.125rem; }
+.tile .k { font: 650 .6875rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.tile .v { font-size: 1.625rem; font-weight: 800; letter-spacing: -.04em; margin-top: .375rem; }
+.tile .d { font-size: .75rem; margin-top: .125rem; color: var(--muted); }
+.up { color: #16a34a; } .down { color: #dc2626; }
+@media (prefers-color-scheme: dark) { .up { color: #4ade80; } .down { color: #f87171; } }
+
+.panel { padding: 1.25rem; }
+.pair { display: grid; gap: .75rem; }
+@media (min-width: 46rem) { .pair { grid-template-columns: 1fr 1fr; } }
+.chart { width: 100%; height: 200px; display: block; overflow: visible; }
+.chart .grid { stroke: var(--border); stroke-width: 1; }
+.chart .lbl { fill: var(--muted); font-size: 10px; font-family: ui-monospace, Menlo, monospace; }
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .75rem; font-size: .75rem; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+
+table { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+.scroll { overflow-x: auto; }
+th, td { text-align: right; padding: .55rem .6rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--card); }
+th { color: var(--muted); font-weight: 650; font-size: .6875rem; text-transform: uppercase;
+  letter-spacing: .06em; }
+tbody tr:last-child td { border-bottom: 0; }
+
+.setup { padding: 1.5rem; }
+.setup h2 { margin-bottom: .75rem; }
+.setup ol { padding-left: 1.25rem; margin: 0; color: var(--muted); font-size: .875rem; line-height: 1.65; }
+.setup code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8125rem;
+  background: color-mix(in srgb, var(--accent) 12%, transparent); padding: .1rem .35rem; border-radius: .3rem; }
+.setup .cols { margin-top: 1rem; font-size: .8125rem; color: var(--muted); }
+.err { color: #dc2626; font-size: .875rem; }
+@media (prefers-color-scheme: dark) { .err { color: #f87171; } }
+</style>
+</head>
+<body>
+<main class="dash">
+  <div class="head">
+    <h1>Ops dashboard</h1>
+    <span class="stamp" id="stamp"></span>
+  </div>
+
+  <div id="setup" class="surface setup" hidden>
+    <h2>Two minutes of setup</h2>
+    <ol>
+      <li>Make a Google Sheet with one row per week and the columns listed below.</li>
+      <li><strong>File → Share → Publish to web</strong> → choose the sheet → <strong>Comma-separated values (.csv)</strong> → Publish.</li>
+      <li>Copy the URL it gives you and paste it into <code>dashboard.csv</code> in <code>config.js</code>.</li>
+    </ol>
+    <p class="cols">Columns, exactly these names in row 1:<br>
+      <code>week, yt_views, yt_subs, shorts_views, tiktok_views, ig_views, calls_booked, clients, mrr</code><br>
+      <code>week</code> is a date like <code>2026-09-07</code> (the Monday). Blank cells are fine.</p>
+  </div>
+
+  <div id="dash" hidden>
+    <p class="eyebrow">This week</p>
+    <div class="tiles" id="tiles"></div>
+
+    <p class="eyebrow">Money</p>
+    <div class="pair">
+      <div class="surface panel">
+        <svg class="chart" id="mrrChart" preserveAspectRatio="none" aria-label="MRR over time"></svg>
+        <div class="legend"><span><i style="background:var(--accent)"></i>MRR ($/month)</span></div>
+      </div>
+      <div class="surface panel">
+        <svg class="chart" id="callsChart" preserveAspectRatio="none" aria-label="Calls booked per week"></svg>
+        <div class="legend"><span><i style="background:var(--spark)"></i>Calls booked</span></div>
+      </div>
+    </div>
+
+    <p class="eyebrow">Reach</p>
+    <div class="surface panel">
+      <svg class="chart" id="reachChart" preserveAspectRatio="none" aria-label="Views by platform"></svg>
+      <div class="legend" id="reachLegend"></div>
+    </div>
+
+    <p class="eyebrow">Every week</p>
+    <div class="surface panel scroll">
+      <table id="table"></table>
+    </div>
+  </div>
+
+  <p id="err" class="err" hidden></p>
+
+  <footer>
+    <p><a href="/">Links</a> · <a href="/services">Services</a></p>
+  </footer>
+</main>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  var c = CONFIG;
+  var url = c.dashboard && c.dashboard.csv;
+
+  if (c.theme) {
+    var accent = matchMedia("(prefers-color-scheme: dark)").matches
+      ? (c.theme.accentDark || c.theme.accent) : c.theme.accent;
+    if (accent) document.documentElement.style.setProperty("--accent", accent);
+  }
+
+  if (!url) { document.getElementById("setup").hidden = false; return; }
+
+  // --- CSV parsing. Handles quoted fields, which Sheets emits for any cell
+  // containing a comma. Naive split() silently corrupts those rows.
+  function parseCSV(text) {
+    var rows = [], row = [], field = "", q = false, i = 0;
+    text = text.replace(/\r\n?/g, "\n");
+    for (; i < text.length; i++) {
+      var ch = text[i];
+      if (q) {
+        if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+        else field += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ",") { row.push(field); field = ""; }
+      else if (ch === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
+      else field += ch;
+    }
+    if (field !== "" || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(function (r) { return r.some(function (x) { return x.trim() !== ""; }); });
+  }
+
+  var num = function (v) {
+    var n = parseFloat(String(v == null ? "" : v).replace(/[^0-9.\-]/g, ""));
+    return isFinite(n) ? n : 0;
+  };
+  var fmt = function (n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+    if (n >= 1e3) return (n / 1e3).toFixed(1).replace(/\.0$/, "") + "k";
+    return String(Math.round(n));
+  };
+
+  function line(svg, series, colors, labels) {
+    var W = 800, H = 200, pad = { t: 12, r: 10, b: 22, l: 40 };
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.innerHTML = "";
+    var NS = "http://www.w3.org/2000/svg";
+    var all = series.reduce(function (a, s) { return a.concat(s); }, []);
+    var max = Math.max.apply(null, all.concat([1]));
+    var n = Math.max.apply(null, series.map(function (s) { return s.length; }));
+    var x = function (i) { return pad.l + (n < 2 ? 0 : i * (W - pad.l - pad.r) / (n - 1)); };
+    var y = function (v) { return pad.t + (1 - v / max) * (H - pad.t - pad.b); };
+
+    [0, 0.5, 1].forEach(function (t) {
+      var yy = y(max * t);
+      var ln = document.createElementNS(NS, "line");
+      ln.setAttribute("class", "grid");
+      ln.setAttribute("x1", pad.l); ln.setAttribute("x2", W - pad.r);
+      ln.setAttribute("y1", yy); ln.setAttribute("y2", yy);
+      svg.appendChild(ln);
+      var tx = document.createElementNS(NS, "text");
+      tx.setAttribute("class", "lbl"); tx.setAttribute("x", 2); tx.setAttribute("y", yy + 3);
+      tx.textContent = fmt(max * t);
+      svg.appendChild(tx);
+    });
+
+    series.forEach(function (s, si) {
+      if (!s.length) return;
+      var d = s.map(function (v, i) { return (i ? "L" : "M") + x(i) + " " + y(v); }).join(" ");
+      var p = document.createElementNS(NS, "path");
+      p.setAttribute("d", d);
+      p.setAttribute("fill", "none");
+      p.setAttribute("stroke", colors[si]);
+      p.setAttribute("stroke-width", "2.5");
+      p.setAttribute("stroke-linejoin", "round");
+      p.setAttribute("stroke-linecap", "round");
+      svg.appendChild(p);
+      var last = document.createElementNS(NS, "circle");
+      last.setAttribute("cx", x(s.length - 1)); last.setAttribute("cy", y(s[s.length - 1]));
+      last.setAttribute("r", 3.5); last.setAttribute("fill", colors[si]);
+      svg.appendChild(last);
+    });
+
+    if (labels) labels.forEach(function (l, i) {
+      if (n > 8 && i % Math.ceil(n / 6) !== 0 && i !== n - 1) return;
+      var tx = document.createElementNS(NS, "text");
+      tx.setAttribute("class", "lbl");
+      tx.setAttribute("x", x(i)); tx.setAttribute("y", H - 6);
+      tx.setAttribute("text-anchor", i === 0 ? "start" : (i === n - 1 ? "end" : "middle"));
+      tx.textContent = l;
+      svg.appendChild(tx);
+    });
+  }
+
+  fetch(url).then(function (r) {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.text();
+  }).then(function (text) {
+    var rows = parseCSV(text);
+    if (rows.length < 2) throw new Error("the sheet has no data rows yet");
+
+    var head = rows[0].map(function (h) { return h.trim().toLowerCase(); });
+    var col = function (name) { return head.indexOf(name); };
+    var data = rows.slice(1).map(function (r) {
+      var o = {};
+      head.forEach(function (h, i) { o[h] = r[i]; });
+      return o;
+    });
+
+    var weeks = data.map(function (d) { return (d.week || "").slice(5); });
+    var mrr = data.map(function (d) { return num(d.mrr); });
+    var calls = data.map(function (d) { return num(d.calls_booked); });
+    var now = data[data.length - 1], prev = data[data.length - 2] || {};
+
+    var totalViews = function (d) {
+      return num(d.yt_views) + num(d.shorts_views) + num(d.tiktok_views) + num(d.ig_views);
+    };
+
+    var tiles = [
+      { k: "Views", v: fmt(totalViews(now)), prev: totalViews(prev), cur: totalViews(now) },
+      { k: "Subscribers", v: fmt(num(now.yt_subs)), prev: num(prev.yt_subs), cur: num(now.yt_subs) },
+      { k: "Calls booked", v: fmt(num(now.calls_booked)), prev: num(prev.calls_booked), cur: num(now.calls_booked) },
+      { k: "MRR", v: "$" + fmt(num(now.mrr)), prev: num(prev.mrr), cur: num(now.mrr) },
+    ];
+    var box = document.getElementById("tiles");
+    tiles.forEach(function (t) {
+      var d = document.createElement("div");
+      d.className = "surface tile";
+      var delta = t.cur - t.prev;
+      var pct = t.prev ? Math.round(delta / t.prev * 100) : null;
+      d.innerHTML = '<div class="k"></div><div class="v"></div><div class="d"></div>';
+      d.querySelector(".k").textContent = t.k;
+      d.querySelector(".v").textContent = t.v;
+      var dd = d.querySelector(".d");
+      if (pct === null) { dd.textContent = "no prior week"; }
+      else {
+        dd.textContent = (delta >= 0 ? "+" : "") + pct + "% vs last week";
+        dd.className = "d " + (delta >= 0 ? "up" : "down");
+      }
+      box.appendChild(d);
+    });
+
+    var cs = getComputedStyle(document.documentElement);
+    var A = cs.getPropertyValue("--accent").trim() || "#1d4ed8";
+    var B = cs.getPropertyValue("--spark").trim() || "#06b6d4";
+    line(document.getElementById("mrrChart"), [mrr], [A], weeks);
+    line(document.getElementById("callsChart"), [calls], [B], weeks);
+
+    var platforms = [
+      ["yt_views", "YouTube", "#FF0033"],
+      ["shorts_views", "Shorts", A],
+      ["tiktok_views", "TikTok", "#FE2C55"],
+      ["ig_views", "Instagram", "#E1306C"],
+    ].filter(function (p) { return col(p[0]) !== -1; });
+    line(document.getElementById("reachChart"),
+      platforms.map(function (p) { return data.map(function (d) { return num(d[p[0]]); }); }),
+      platforms.map(function (p) { return p[2]; }), weeks);
+    document.getElementById("reachLegend").innerHTML = platforms.map(function (p) {
+      return '<span><i style="background:' + p[2] + '"></i>' + p[1] + '</span>';
+    }).join("");
+
+    var t = document.getElementById("table");
+    var thead = "<thead><tr>" + head.map(function (h) {
+      return "<th>" + h.replace(/_/g, " ") + "</th>";
+    }).join("") + "</tr></thead>";
+    var tbody = "<tbody>" + data.slice().reverse().map(function (d) {
+      return "<tr>" + head.map(function (h) {
+        var v = d[h] == null ? "" : d[h];
+        return "<td>" + String(v).replace(/[<>&]/g, "") + "</td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody>";
+    t.innerHTML = thead + tbody;
+
+    document.getElementById("stamp").textContent =
+      data.length + " weeks · updated " + new Date().toLocaleDateString();
+    document.getElementById("dash").hidden = false;
+  }).catch(function (e) {
+    var el = document.getElementById("err");
+    el.textContent = "Couldn't load the sheet (" + e.message + "). Check that it's published to " +
+      "the web as CSV and that the link in config.js is the published URL, not the edit URL.";
+    el.hidden = false;
+    document.getElementById("setup").hidden = false;
+  });
+})();
+</script>
+</body>
+</html>

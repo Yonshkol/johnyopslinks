@@ -47,6 +47,8 @@ your site, done. Repeat forever — that's the whole workflow.
 | `avatar` | Your photo. Upload a `.jpg` to this repo and put its filename here, or paste a full `https://` link. Leave `""` for no photo. |
 | `theme.accent` / `accentDark` | Button and highlight color, for light mode and dark mode. The page follows the visitor's phone setting automatically. |
 | `links` | Your buttons. Copy an existing block to add one. Reorder them by moving blocks up or down — top of the list is top of the page. `description` is optional. Add `featured: true` to make one a big filled button (use it once). |
+| `services` | The whole `/services` page: headline, the three pillars, your price tiers, the three steps, and the closing block. Prices are plain text — write `$450`, `from $450`, whatever you want. |
+| `dashboard.csv` | The published-to-web URL of your Google Sheet. See below. |
 | `links[].icon` | Type one of: `youtube`, `linkedin`, `instagram`, `tiktok`, `substack`, `calendar`, `briefcase`, `mail`, `link`. You get the proper logo in the proper brand color. Anything else is treated as an emoji or an image link. |
 | `emailEndpoint` | Where signups go — see below. Leave `""` and the signup box disappears. |
 | `goatcounter` | Click tracking — see below. Leave `""` for none. |
@@ -85,13 +87,39 @@ Leave `goatcounter` as `""` and nothing is tracked at all.
 
 ---
 
+## The three pages
+
+| Address | What it is |
+| --- | --- |
+| `/` | Your link hub. The one you put in every bio. |
+| `/services` | What you offer and what it costs. Everything comes from the `services` block in `config.js`. |
+| `/dashboard` | Your numbers. Not linked from anywhere and marked no-index, but it isn't secret — anyone with the address can open it. |
+
+## The dashboard
+
+It reads a Google Sheet you fill in once a week. No login, no API keys, nothing to expire.
+
+1. Make a Google Sheet. Row 1 must have exactly these column names:
+   `week, yt_views, yt_subs, shorts_views, tiktok_views, ig_views, calls_booked, clients, mrr`
+2. One row per week. `week` is the Monday's date, like `2026-09-07`. Blank cells are fine.
+3. **File → Share → Publish to web** → pick the sheet → **Comma-separated values (.csv)** → **Publish**.
+4. Copy that URL into `dashboard.csv` in `config.js`.
+
+`sample.csv` in this folder shows the shape. Until you paste a real URL, `/dashboard`
+just shows these instructions.
+
+Anyone with the link can read those numbers. If that bothers you, don't publish the
+Sheet — the dashboard is the only thing that breaks.
+
 ## The files (you can ignore all of these)
 
 - `config.js` — **the only file you edit**
-- `index.html` — the page itself: styling, logos and behaviour, all in one file
-- `build.js` — runs on Netlify; copies your title/description/preview image into the
-  page so link previews work in Slack, iMessage, WhatsApp etc.
+- `index.html`, `services.html`, `dashboard.html` — the three pages
+- `style.css` — shared look and feel
+- `build.js` — runs on Netlify; copies your titles and preview images into the pages so
+  link previews work in Slack, iMessage, WhatsApp etc.
 - `netlify.toml` — tells Netlify what to do
+- `sample.csv` — an example of the dashboard sheet
 
 ---
 
