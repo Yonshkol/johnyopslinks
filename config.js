@@ -161,7 +161,7 @@ const CONFIG = {
   // --- Click tracking (optional, free, no server) -------------------
   // Sign up at goatcounter.com, put your site code here (the bit before
   // .goatcounter.com). Leave "" for no tracking at all.
-  goatcounter: "",
+  goatcounter: "johnyops",
 
   // --- Search engines & link previews ------------------------------
   seo: {
